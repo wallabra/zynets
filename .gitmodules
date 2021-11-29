@@ -1,0 +1,6 @@
+[submodule "ext/cimgui"]
+	path = ext/cimgui
+	url = git://github.com/cimgui/cimgui
+[submodule "ext/mach-glfw"]
+	path = ext/mach-glfw
+	url = git://github.com/hexops/mach-glfw
