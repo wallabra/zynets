@@ -1,12 +1,8 @@
 const std = @import("std");
 
 
-fn buildLibraryStep() *std.build.LibExeObjStep {
-
-}
-
 pub fn addToStep(b: *std.build.Builder, step: *std.build.LibExeObjStep) void {
-    step.linkLibrary(buildLibraryStep());
+    step.linkLibrary(step(b));
 }
 
 pub fn step(b: *std.build.Builder) *std.build.LibExeObjStep {
@@ -16,6 +12,8 @@ pub fn step(b: *std.build.Builder) *std.build.LibExeObjStep {
     const mode = b.standardReleaseOptions();
 
     const zynets = b.addStaticLibrary("zynets", "src/main.zig");
+    zynets.setBuildMode(mode);
+    zynets.setTarget(target);
 
     return zynets;
 }
@@ -24,13 +22,14 @@ pub fn build(b: *Builder) void {
     const mode = b.standardReleaseOptions();
     const target = b.standardTargetOptions(.{});
 
+    const libStep = step(b);
+    libStep.install();
+
     const main_tests = b.addTest("src/test.zig");
     main_tests.setBuildMode(mode);
     main_tests.setTarget(target);
-    link(b, main_tests, .{});
+    main_tests.dependOn(libStep);
 
     const test_step = b.step("test", "Run library tests");
     test_step.dependOn(&main_tests.step);
-
-    step(b);
 }
